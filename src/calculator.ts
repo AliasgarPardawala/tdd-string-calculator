@@ -9,7 +9,15 @@ function add(numbers: string): number {
 
     const {delimiter, normalizedString} = sanitizeInput(numbers)
 
-    return normalizedString.split(delimiter).map(num => parseInt(num, 10)).reduce((a, c) => a + c, 0)
+    const numberArray = normalizedString.split(delimiter).map(num => parseInt(num, 10))
+
+    const negativeNumbers = numberArray.filter(num => num < 0)
+
+    if (negativeNumbers.length > 0) {
+        throw new Error(`Negative numbers not allowed: ${negativeNumbers.join(', ')}`);
+    }
+
+    return numberArray.reduce((a, c) => a + c, 0)
 }
 
 function sanitizeInput(numbers: string): SanitizedInput {

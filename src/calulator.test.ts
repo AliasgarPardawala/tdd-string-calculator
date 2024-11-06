@@ -28,4 +28,9 @@ describe('Calculator', () => {
         expect(add('//:\n4:5:6')).toBe(15);
         expect(add('//.\n4.5.6')).toBe(15);
     });
+
+    it('should throw an error when negative numbers are passed', () => {
+        expect(() => add('1,-2,3')).toThrowError('Negative numbers not allowed: -2');
+        expect(() => add('5,-10,15,-5')).toThrowError('Negative numbers not allowed: -10, -5');
+    });
 })
