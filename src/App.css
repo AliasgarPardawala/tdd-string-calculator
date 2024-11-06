@@ -1,42 +1,55 @@
+body {
+    background-color: rgb(117, 132, 106);
+    overflow: hidden;
+}
+
+textarea {
+    min-width: 50vw;
+    max-width: 90vw;
+    min-height: 150px;
+    max-height: 300px;
+}
+
+button {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.input-label {
+    display: block;
+    text-align: center;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.danger {
+    color: #B22323;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.history-table {
+    display: flex;
+    max-width: 90vw;
+    justify-content: center;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 
-.card {
-  padding: 2em;
+.history-list-item {
+    display: flex;
+    justify-content: space-between;
 }
 
-.read-the-docs {
-  color: #888;
+.history-list-item > span {
+    text-align: start;
+    word-break: break-all;
+    max-width: 300px;
+}
+
+.scroll {
+    overflow-y: scroll;
+    max-height: 50vh;
 }

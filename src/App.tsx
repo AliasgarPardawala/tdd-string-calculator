@@ -1,35 +1,117 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, {useState} from "react";
 import './App.css'
+import {add} from "./calculator.ts";
+
+interface SumHistory {
+    input: string,
+    answer: number | null,
+    error: string | null
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [input, setInput] = useState<string>("")
+    const [answer, setAnswer] = useState<number | null>(null)
+    const [error, setError] = useState<string | null>(null)
+    const [history, setHistory] = useState<SumHistory[]>([])
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setInput(e.target.value)
+        setAnswer(null)
+        setError(null)
+    }
+
+    const handleSubmit = () => {
+        const res: SumHistory = {
+            input,
+            answer: null,
+            error: null
+        }
+        try {
+            const a = add(input)
+            setAnswer(a)
+            res.answer = a
+            setError(null)
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                setError(e.message)
+                res.error = e.message
+                setAnswer(null)
+            }
+        } finally {
+            setHistory([...history, res])
+        }
+    }
+
+    const renderInput = () => {
+        return (
+            <div>
+                <span className={"input-label"}>Enter Input</span>
+                <textarea
+                    name={"input"}
+                    onChange={(e) => handleInputChange(e)}
+                />
+            </div>
+        )
+    }
+
+    const renderSubmitButton = () => {
+        return (
+            <div>
+                <button onClick={handleSubmit}>
+                    Calculate
+                </button>
+            </div>
+        )
+    }
+
+    const renderOutput = () => {
+        return (
+            <div>
+                {answer !== null &&
+                    <span>Sum is: {answer}</span>
+                }
+                {error !== null &&
+                    <span className={"danger"}>{error}</span>
+                }
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <h2>String Calculator</h2>
+            {renderInput()}
+            {renderSubmitButton()}
+            {renderOutput()}
+            <HistoryList history={history}/>
+        </>
+    )
+}
+
+
+const HistoryList = ({history}: { history: SumHistory[] }) => {
+    if (!history.length) {
+        return <></>
+    }
+    return (
+        <>
+            <h3>History</h3>
+            <div className={"history-table"}>
+                <div className={"history-list-item"}>
+                    <span>Input</span>
+                    <span>Output</span>
+                </div>
+                <div className={"scroll"}>
+                    {history.map((calculation) =>
+                        <div className={"history-list-item"}>
+                            <span>{calculation.input}</span>
+                            <span>{calculation.answer || calculation.error}</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </>
+    )
 }
 
 export default App
