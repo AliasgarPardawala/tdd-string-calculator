@@ -102,8 +102,8 @@ const HistoryList = ({history}: { history: SumHistory[] }) => {
                     <span>Output</span>
                 </div>
                 <div className={"scroll"}>
-                    {history.map((calculation) =>
-                        <div className={"history-list-item"}>
+                    {history.map((calculation, index) =>
+                        <div key={calculation.input + index} className={"history-list-item"}>
                             <span>{calculation.input}</span>
                             <span>{calculation.answer || calculation.error}</span>
                         </div>
