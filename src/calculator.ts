@@ -1,5 +1,5 @@
 interface SanitizedInput {
-    delimiter: string,
+    delimiters: string[],
     normalizedString: string
 }
 
@@ -7,9 +7,8 @@ function add(numbers: string): number {
     if (numbers === "")
         return 0
 
-    const {delimiter, normalizedString} = sanitizeInput(numbers)
-
-    const numberArray = normalizedString.split(delimiter).map(num => parseInt(num, 10))
+    const {delimiters, normalizedString} = sanitizeInput(numbers)
+    const numberArray = normalizedString.split(new RegExp(delimiters.join("|"))).map(num => parseInt(num, 10))
 
     const negativeNumbers = numberArray.filter(num => num < 0)
 
@@ -21,18 +20,35 @@ function add(numbers: string): number {
 }
 
 function sanitizeInput(numbers: string): SanitizedInput {
-    if (numbers.startsWith('//')) {
+    if (numbers.startsWith('//[')) {
         const delimiterEndIndex = numbers.indexOf('\n');
+        const delimiterPart = numbers.substring(2, delimiterEndIndex);
         return {
-            delimiter: numbers.substring(2, delimiterEndIndex),
+            delimiters: extractDelimiters(delimiterPart),
             normalizedString: numbers.substring(delimiterEndIndex + 1)
         }
     } else {
         return {
-            delimiter: ",",
+            delimiters: [","],
             normalizedString: numbers.replace(/\n/g, ',')
         }
     }
+}
+
+function extractDelimiters(delimiterPart: string): string[] {
+    let delimiters = delimiterPart.split('][')
+
+    delimiters = delimiters.map((d) => {
+        if (d.includes("."))
+            return d.replace(".", "\\.")
+
+        if (d.includes("*"))
+            return d.replace("*", "\\*")
+
+        return d
+    })
+
+    return delimiters.map(d => d.replace('[', "").replace(']', ''))
 }
 
 export {add}

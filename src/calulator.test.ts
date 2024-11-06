@@ -24,9 +24,9 @@ describe('Calculator', () => {
     });
 
     it('should handle custom delimiters', () => {
-        expect(add('//;\n1;2;3')).toBe(6);
-        expect(add('//:\n4:5:6')).toBe(15);
-        expect(add('//.\n4.5.6')).toBe(15);
+        expect(add('//[;]\n1;2;3')).toBe(6);
+        expect(add('//[:]\n4:5:6')).toBe(15);
+        expect(add('//[.]\n4.5.6')).toBe(15);
     });
 
     it('should throw an error when negative numbers are passed', () => {
@@ -38,5 +38,10 @@ describe('Calculator', () => {
         expect(add('2,1001,3')).toBe(5);
         expect(add('1000,1001')).toBe(1000);
         expect(add('1000,5000,10')).toBe(1010);
+    });
+
+    it('should handle multiple custom delimiters', () => {
+        expect(add('//[;][%]\n1;2%3')).toBe(6); // Delimiters are ';' and '%'
+        expect(add('//[*][|]\n4|5*6')).toBe(15); // Delimiters are '|' and '@'
     });
 })
