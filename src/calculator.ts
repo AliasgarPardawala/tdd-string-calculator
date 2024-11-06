@@ -17,7 +17,7 @@ function add(numbers: string): number {
         throw new Error(`Negative numbers not allowed: ${negativeNumbers.join(', ')}`);
     }
 
-    return numberArray.reduce((a, c) => a + c, 0)
+    return numberArray.filter(num => num <= 1000).reduce((a, c) => a + c, 0)
 }
 
 function sanitizeInput(numbers: string): SanitizedInput {
