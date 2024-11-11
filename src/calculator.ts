@@ -1,4 +1,10 @@
+enum OperationTypes {
+    ADD = "ADD",
+    MULTIPLY = "MULTIPLY",
+}
+
 interface SanitizedInput {
+    operationType: OperationTypes;
     delimiters: string[],
     normalizedString: string
 }
@@ -7,8 +13,12 @@ function add(numbers: string): number {
     if (numbers === "")
         return 0
 
-    const {delimiters, normalizedString} = sanitizeInput(numbers)
-    const numberArray = normalizedString.split(new RegExp(delimiters.join("|"))).map(num => parseInt(num, 10))
+    const {operationType, delimiters, normalizedString} = sanitizeInput(numbers)
+    const numberArray =
+        normalizedString
+            .split(new RegExp(`[${delimiters.join(",")}]`))
+            .map(num => parseInt(num, 10))
+            .filter(num => num <= 1000)
 
     const negativeNumbers = numberArray.filter(num => num < 0)
 
@@ -16,19 +26,22 @@ function add(numbers: string): number {
         throw new Error(`Negative numbers not allowed: ${negativeNumbers.join(', ')}`);
     }
 
-    return numberArray.filter(num => num <= 1000).reduce((a, c) => a + c, 0)
+    return operationType === OperationTypes.ADD ? sum(numberArray) : multiply(numberArray)
 }
 
 function sanitizeInput(numbers: string): SanitizedInput {
     if (numbers.startsWith('//[')) {
         const delimiterEndIndex = numbers.indexOf('\n');
-        const delimiterPart = numbers.substring(2, delimiterEndIndex);
+        const delimiterPart = numbers.split("\n")[0].substring(2);
+        const delimiters = extractDelimiters(delimiterPart)
         return {
-            delimiters: extractDelimiters(delimiterPart),
+            operationType: getOperationType(delimiters),
+            delimiters: delimiters,
             normalizedString: numbers.substring(delimiterEndIndex + 1)
         }
     } else {
         return {
+            operationType: OperationTypes.ADD,
             delimiters: [","],
             normalizedString: numbers.replace(/\n/g, ',')
         }
@@ -36,19 +49,19 @@ function sanitizeInput(numbers: string): SanitizedInput {
 }
 
 function extractDelimiters(delimiterPart: string): string[] {
-    let delimiters = delimiterPart.split('][')
+    return delimiterPart.split('][').map(d => d.replace('[', "").replace(']', ''))
+}
 
-    delimiters = delimiters.map((d) => {
-        if (d.includes("."))
-            return d.replace(".", "\\.")
+const sum = (numbers: number[]): number => numbers.reduce((a, c) => a + c, 0)
 
-        if (d.includes("*"))
-            return d.replace("*", "\\*")
+const multiply = (numbers: number[]): number => numbers.reduce((a, c) => a * c, 1)
 
-        return d
-    })
+function getOperationType(delimiters: string[]): OperationTypes {
 
-    return delimiters.map(d => d.replace('[', "").replace(']', ''))
+    if (delimiters.includes("*") && delimiters.length === 1)
+        return OperationTypes.MULTIPLY
+
+    return OperationTypes.ADD
 }
 
 export {add}

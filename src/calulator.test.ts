@@ -44,4 +44,8 @@ describe('Calculator', () => {
         expect(add('//[;][%]\n1;2%3')).toBe(6); // Delimiters are ';' and '%'
         expect(add('//[*][|]\n4|5*6')).toBe(15); // Delimiters are '|' and '@'
     });
+
+    it('should multiply when * is given as only delimiter', () => {
+        expect(add("//[*]\n4*5*6')")).toBe(120)
+    })
 })
